@@ -16,13 +16,12 @@ namespace Edabit {
 
         }
 
-        static Func<String, Int32> CountDs = (String theString) => {
-            String[] res = theString.Split(String.Empty)//.Where(eachLetter => eachLetter.ToLower().StartsWith("d")).Count();
-            for (int i = 0; i < res.Length; i++) {
-                Console.WriteLine(res[i]);
-            }
-            return -1;
+        public static Func<String, Int32> CountDs = (String theString) => {
+            char[] res = theString.ToCharArray();
+            return res.Where(e => e.ToString().ToLower().Equals("d")).Count();
         };
+
+        
 
         public static void Main(string[] args)
         {
