@@ -1,0 +1,16 @@
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.csproj.AssemblyReference.cache
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.AssemblyInfoInputs.cache
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.AssemblyInfo.cs
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.csproj.CoreCompileInputs.cache
+C:\Users\flyin\Desktop\C#\Edabit\bin\Debug\net5.0\Edabit.exe
+C:\Users\flyin\Desktop\C#\Edabit\bin\Debug\net5.0\Edabit.deps.json
+C:\Users\flyin\Desktop\C#\Edabit\bin\Debug\net5.0\Edabit.runtimeconfig.json
+C:\Users\flyin\Desktop\C#\Edabit\bin\Debug\net5.0\Edabit.runtimeconfig.dev.json
+C:\Users\flyin\Desktop\C#\Edabit\bin\Debug\net5.0\Edabit.dll
+C:\Users\flyin\Desktop\C#\Edabit\bin\Debug\net5.0\ref\Edabit.dll
+C:\Users\flyin\Desktop\C#\Edabit\bin\Debug\net5.0\Edabit.pdb
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.dll
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\ref\Edabit.dll
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.pdb
+C:\Users\flyin\Desktop\C#\Edabit\obj\Debug\net5.0\Edabit.genruntimeconfig.cache

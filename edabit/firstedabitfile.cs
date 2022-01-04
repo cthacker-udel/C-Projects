@@ -1,25 +1,33 @@
 using System;
 using System.Linq;
-public static class Edabit {
+using System.Runtime;
+namespace Edabit {
 
 
-    public static int Sum(int num1, int num2) {
-        return num1 + num2;
-    }
+    class edabitStorage {
 
-    public static double[] FindMinMax(double[] numbers) {
+        public static int Sum(int num1, int num2) {
+            return num1 + num2;
+        }
 
-        return new double[]{numbers.Min(), numbers.Max()};        
+        public static double[] FindMinMax(double[] numbers) {
 
-    }
+            return new double[]{numbers.Min(), numbers.Max()};        
 
-    public static int CountDs = (String theString) => {
-        return theString.Split(String.Empty).Where(eachLetter => eachLetter.ToLower().StartsWith("d")).Count();
-    };
+        }
 
-    public static void Main(string[] args)
-    {
-        Console.WriteLine(CountDs("My friend Dylan got distracted in school."));
+        static Func<String, Int32> CountDs = (String theString) => {
+            String[] res = theString.Split(String.Empty)//.Where(eachLetter => eachLetter.ToLower().StartsWith("d")).Count();
+            for (int i = 0; i < res.Length; i++) {
+                Console.WriteLine(res[i]);
+            }
+            return -1;
+        };
+
+        public static void Main(string[] args)
+        {
+            Console.WriteLine(CountDs("My friend Dylan got distracted in school."));
+        }
     }
 
 }
