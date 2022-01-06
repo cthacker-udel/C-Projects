@@ -3,6 +3,7 @@ using System.Linq;
 using System.Runtime;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 namespace Edabit {
 
 
@@ -276,11 +277,112 @@ namespace Edabit {
 
         };
 
+        public static Func<int[], int> MinMissPos = (int[] numbers) => {
+
+            List<int> numberList = numbers.Where<int>(e => e > 0).ToList<int>();
+
+            numberList.Sort();
+
+            numberList.ForEach(Console.WriteLine);
+
+            for (int i = 0; i < numberList.Count(); i++) {
+
+                int number = numberList[i];
+                if (!numberList.Contains(number - 1) && number != 1) {
+                    return number - 1;
+                } else if (!numberList.Contains(number + 1)) {
+                    return number + 1;
+                }
+
+            }
+            return 1;
+
+        };
+
+        public static Func<String, String, int> FirstIndex = (String firstString, String lastString) => {
+
+            String[] splitHex = firstString.Split(" ");
+            List<String> strList = new List<String>();
+            foreach (String eachHex in splitHex) {
+
+                int theNumber = int.Parse(eachHex, System.Globalization.NumberStyles.HexNumber);
+                char theChar = (char)theNumber;
+                strList.Add(theChar+"");
+
+            }
+            String theString = "";
+            for (int i = 0; i < strList.Count(); i++) {
+                theString += strList[i];
+            }
+            return theString.IndexOf(lastString);
+
+        };
+
+        public static Func<String, int> NumberOfRepeats = (String theString) => {
+
+            String theSub = "";
+            int max = 0;
+            for (int i = 0; i < theString.Length; i++) {
+
+                theSub += theString[i];
+                if (theString.Contains(theSub)) {
+                    int index = theString.IndexOf(theSub);
+                    int count = 1;
+                    int loopIndex = index;
+                    while (loopIndex < theString.Length) {
+                        loopIndex += theSub.Length;
+                        if ((loopIndex + theSub.Length) < theString.Length && theString.Substring(loopIndex, theSub.Length).Equals(theSub)) {
+                            count++;
+                        }
+                    }
+                    max = Math.Max(max, count);
+                }
+
+            }
+            return max;
+            
+        };
+
+        public static Func<String, Boolean> IsValidIp = (String ip) => {
+
+            String[] values = ip.Split('.');
+            Console.WriteLine("input = {0}", ip);
+            if (values.Length != 4) {
+                return false;
+            } else {
+                int[] validValues = values.Where(e => e.ToCharArray().All(f => Char.IsDigit(f))).Where(e => !e.StartsWith("0") || e.Equals("0")).Select(e => int.Parse(e)).ToArray();
+                return validValues.Length == 4 && validValues.All(e => e >= 0 && e <= 255);
+            }
+
+
+            Regex expr = new Regex("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            
+            MatchCollection matches = expr.Matches(ip);
+
+            int count = 0;
+
+            foreach (Match match in matches) {
+                GroupCollection groups = match.Groups;
+                for (int i = 0; i < groups.Count; i++) {
+                    Group theGroup = groups[i];
+                    if (int.Parse(theGroup.Name) > 0) {
+                        count++;
+                        int theValue = int.Parse(theGroup.Value);
+                        if (theValue < 0 || theValue > 255) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return count == 4;
+
+        };
+
 
         public static void Main(string[] args)
         {   
 
-            Console.WriteLine(PalendromeTimestamps(2, 12, 22, 4, 35, 10));
+            Console.WriteLine(IsValidIp("1.2.3"));
 
         }
     }
