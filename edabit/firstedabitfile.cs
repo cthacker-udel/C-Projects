@@ -355,34 +355,179 @@ namespace Edabit {
             }
 
 
-            Regex expr = new Regex("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            // Regex expr = new Regex("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})", RegexOptions.Compiled | RegexOptions.IgnoreCase);
             
-            MatchCollection matches = expr.Matches(ip);
+            // MatchCollection matches = expr.Matches(ip);
 
-            int count = 0;
+            // int count = 0;
 
-            foreach (Match match in matches) {
-                GroupCollection groups = match.Groups;
-                for (int i = 0; i < groups.Count; i++) {
-                    Group theGroup = groups[i];
-                    if (int.Parse(theGroup.Name) > 0) {
-                        count++;
-                        int theValue = int.Parse(theGroup.Value);
-                        if (theValue < 0 || theValue > 255) {
-                            return false;
+            // foreach (Match match in matches) {
+            //     GroupCollection groups = match.Groups;
+            //     for (int i = 0; i < groups.Count; i++) {
+            //         Group theGroup = groups[i];
+            //         if (int.Parse(theGroup.Name) > 0) {
+            //             count++;
+            //             int theValue = int.Parse(theGroup.Value);
+            //             if (theValue < 0 || theValue > 255) {
+            //                 return false;
+            //             }
+            //         }
+            //     }
+            // }
+            // return count == 4;
+
+        };
+
+        public static Func<int, int, int[][]> PrintGrid = (int x, int y) => {
+
+            int starter = 1;
+            List<List<int>> matrix = new List<List<int>>();
+            int end = x * y;
+            for (int i = 0; i < x; i++) {
+                matrix.Add(new List<int>());
+            }
+            int cycler = 0;
+            while (starter <= end) {
+                int placement = cycler % x;
+                matrix[placement].Add(starter++);
+                cycler++;
+            }
+            List<int[]> returnMatrix = new List<int[]>();
+            for (int i = 0; i < matrix.Count(); i++) {
+                returnMatrix.Add(matrix[i].ToArray());
+            }
+            return returnMatrix.ToArray();
+        };
+
+        public static Func<String, String, Boolean> Overlap = (String firstWord, String secondWord) => {
+
+            firstWord = firstWord.Replace("*", ".").Replace("+","\\+").ToLower();
+            secondWord = secondWord.Replace("*", ".").Replace("+","\\+").ToLower();
+
+            int matchingSequence = 0; // 0 means both lengths are suffice, 1 means just firstword expr, 2 means just secondword expr, 3 means none
+
+            Regex expr1 = new Regex("");
+            Regex expr2 = new Regex("");
+
+            if (firstWord.Length <= secondWord.Length) {
+                expr1 = new Regex(String.Format("{0}$", secondWord.Substring(secondWord.Length - firstWord.Length)));
+                matchingSequence = 1;
+            } else {
+                matchingSequence = 3;
+            }
+            if (secondWord.Length <= firstWord.Length) {
+                Console.WriteLine("distance = {0}", firstWord.Length - secondWord.Length);
+                expr2 = new Regex(String.Format("{0}$", firstWord.Substring(firstWord.Length - secondWord.Length)));
+                if (matchingSequence == 1) {
+                    matchingSequence = 0;
+                } else {
+                    matchingSequence = 2;
+                }
+            } else {
+                matchingSequence = 3;
+            }
+
+            Console.Write("matchingsequence = {0}", matchingSequence);
+
+            return expr1.Match(secondWord).Success || expr2.Match(firstWord).Success;
+
+        };
+
+        public struct Rational {
+
+            public Rational(int newNumerator, int newDenominator) {
+                sign = newNumerator < 0 && newDenominator < 0 ? true : newNumerator < 0 && newDenominator > 0 ? false : newNumerator > 0 && newDenominator < 0 ? false : true;
+                numSign = newNumerator > 0;
+                denSign = newDenominator > 0;
+                if (!denSign && !numSign) {
+                    numSign = true;
+                    denSign = true;
+                }
+                // numSign = true = positive, false = negative
+                // denSign = true = positive, false = negative
+                // sign = true = positive, false = negative
+                this.numerator = Math.Abs(newNumerator);
+                this.denominator = Math.Abs(newDenominator);
+                if (newDenominator == 0) {
+                    throw new ArgumentException("Invalid Denominator");
+                }
+                else if (newNumerator == 0) {
+                    this.denominator = 1;
+                } else {
+                    this.denominator = Math.Abs(newDenominator);
+                    // time to reduce
+                    bool foundFactor = this.numerator != 0 && this.numerator != 1 && this.denominator != 1;
+                    while (foundFactor) {
+                        for (int i = 2; i <= Math.Min(this.numerator, this.denominator); i++) {
+                            if (this.numerator % i == 0 && this.denominator % i == 0) {
+                                this.numerator /= i;
+                                this.denominator /= i;
+                                foundFactor = true;
+                                break;
+                            } else {
+                                foundFactor = false;
+                            }
+                        }
+                        if (this.numerator == 1 || this.denominator == 1) {
+                            break;
                         }
                     }
                 }
             }
-            return count == 4;
 
-        };
+            public override string ToString() {
+
+                if (this.denominator == 1) {
+                    if (sign) {
+                        return String.Format("{0}", this.numerator);
+                    } else {
+                        return String.Format("-{0}", this.numerator);
+                    }
+                }
+
+                if (sign) {
+                    // positive
+                    return String.Format("{0}/{1}", this.numerator, this.denominator);
+                } else {
+                    return String.Format("-{0}/{1}", this.numerator, this.denominator);
+                }
+
+            }
+
+            private int numerator;
+            private int denominator;
+            public int Numerator { get{
+                Console.WriteLine("sign = {0}", sign ? "true": "false");
+                if (numSign) {
+                    return numerator;
+                } else {
+                    return numerator * -1;
+                }
+            } }
+            public int Denominator { get {
+                Console.WriteLine("sign = {0}", sign ? "true": " false");
+                if (denSign) {
+                    return denominator;
+                } else {
+                    return denominator * -1;
+                }
+            } }
+            public bool sign { get; }
+            public bool numSign { get; }
+
+            public bool denSign { get; }
+
+        }
 
 
         public static void Main(string[] args)
         {   
 
-            Console.WriteLine(IsValidIp("1.2.3"));
+            var r1 = new Rational(-3, 4);
+            Console.WriteLine(r1.Numerator);
+            Console.WriteLine(r1.Denominator);
+            Console.WriteLine(r1.ToString());
+
 
         }
     }
