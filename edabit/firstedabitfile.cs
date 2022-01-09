@@ -519,14 +519,68 @@ namespace Edabit {
 
         }
 
+        public static Func<Int32, String[]> Arrow = (Int32 num) => {
+
+            List<String> arrows = new List<String>();
+            int starter = 1;
+            bool peak = true;
+            while (peak || starter > 0) {
+
+                arrows.Add(">".PadRight(starter, '>'));
+                if (peak) {
+                    starter++;
+                    if (starter > num) {
+                        peak = false;
+                        if (num % 2 != 0) {
+                            starter -= 2;
+                        } else {
+                            starter--;
+                        }
+                    }
+                } else {
+                    starter--;
+                }
+
+            }
+            return arrows.ToArray();
+        };
+
+        public static Func<Int32, Boolean> isNumberPalindrome = (Int32 num) => {
+
+            return num.ToString().Equals(num.ToString().ToCharArray().Reverse().Aggregate("", (char1, char2) => char1 + "" + char2));
+
+        };
+
+        public static Func<Int32, Int32> ClosestPalindrome = (Int32 num) => {
+
+
+            int smaller = num;
+            int bigger = num;
+            bool palinFound = false;
+            if (isNumberPalindrome(num)) {
+                return num;
+            }
+            while (!palinFound) {
+
+                smaller--;
+                bigger++;
+                if (isNumberPalindrome(smaller)) {
+                    return smaller;
+                } else if (isNumberPalindrome(bigger)) {
+                    return bigger;
+                }
+
+            }
+            return -1;
+
+
+        };
+
 
         public static void Main(string[] args)
         {   
 
-            var r1 = new Rational(-3, 4);
-            Console.WriteLine(r1.Numerator);
-            Console.WriteLine(r1.Denominator);
-            Console.WriteLine(r1.ToString());
+            Console.WriteLine(ClosestPalindrome(887));
 
 
         }
