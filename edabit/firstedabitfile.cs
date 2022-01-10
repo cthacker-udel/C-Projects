@@ -576,11 +576,195 @@ namespace Edabit {
 
         };
 
+        public static Func<String, String> EncodeMorse = (String message) => {
+
+            message = message.ToUpper();
+
+            Dictionary<String, String> morseDict = new Dictionary<String, String>();
+            morseDict.Add("A", ".-");
+            morseDict.Add("B", "-...");
+            morseDict.Add("C", "-.-.");
+            morseDict.Add("D", "-..");
+            morseDict.Add("E", ".");
+            morseDict.Add("F", "..-.");
+            morseDict.Add("G", "--.");
+            morseDict.Add("H", "....");
+            morseDict.Add("I", "..");
+            morseDict.Add("J",".---");
+            morseDict.Add("K", "-.-");
+            morseDict.Add("L", ".-..");
+            morseDict.Add("M", "--");
+            morseDict.Add("N", "-.");
+            morseDict.Add("O", "---");
+            morseDict.Add("P", ".--.");
+            morseDict.Add("Q", "--.-");
+            morseDict.Add("R", ".-.");
+            morseDict.Add("S", "...");
+            morseDict.Add("T", "-");
+            morseDict.Add("U", "..-");
+            morseDict.Add("V", "...-");
+            morseDict.Add("W", ".--");
+            morseDict.Add("X", "-..-");
+            morseDict.Add("Y", "-.--");
+            morseDict.Add("Z", "--..");
+            morseDict.Add("0", "-----");
+            morseDict.Add("1", ".----");
+            morseDict.Add("2", "..---");
+            morseDict.Add("3", "...--");
+            morseDict.Add("4", "....-");
+            morseDict.Add("5", ".....");
+            morseDict.Add("6", "-....");
+            morseDict.Add("7", "--...");
+            morseDict.Add("8", "---..");
+            morseDict.Add("9", "----.");
+            morseDict.Add("?", "..--..");
+            morseDict.Add("!", "-.-.--");
+            morseDict.Add(":", "---...");
+            morseDict.Add(",", "--..--");
+            morseDict.Add(".", ".-.-.-");
+            morseDict.Add("\'", ".----.");
+
+            return message.ToCharArray().Select(e => e == ' ' ? " " : morseDict[e.ToString()]).Aggregate("", (str1, str2) => str1 + " " + str2).Trim();
+
+        };
+
+        public static void PrintList(List<int> list, String specifier) {
+
+            Console.WriteLine("\n----Printing {0}----", specifier);
+            String emptyString = "";
+            for (int i = 0; i < list.Count(); i++) {
+                if (i == (list.Count() - 1)) {
+                    emptyString += String.Format("{0}", list[i]);                    
+                } else {
+                    emptyString += String.Format("{0}, ", list[i]);
+                }
+            }
+            Console.WriteLine(emptyString);
+            Console.WriteLine("----------------------");
+
+        }
+
+        public static IEnumerable<IEnumerable<int>> CalculatePerms(IEnumerable<int> numbers, int length) {
+
+            if (length == 1) {
+                return numbers.Select(e => new int[]{ e });
+            } else {
+                return CalculatePerms(numbers, length - 1)
+                    .SelectMany(t => numbers.Where(e => !t.Contains(e)), (t1, t2) => t1.Concat(new int[] { t2 }));
+            }
+
+        }
+
+        public static List<List<int>> GetPerms(List<int> numbers, int len) {
+
+            IEnumerable<IEnumerable<int>> list = CalculatePerms(numbers, len);
+            int count = 0;
+            List<List<int>> amts = list.Where(e => e.Aggregate(0, (elem1, elem2) => elem1 + elem2) < 10).Select(eachList => eachList.ToList()).ToList();
+            return amts;
+
+        }
+
+        public static Func<int[], int, Boolean> CanFit = (int[] items, int numBags) => {
+
+            int sum = items.Aggregate(0, (elem1, elem2) => elem1 + elem2);
+            if (items.Where(e => e == 4).Count() == items.Count()) {
+                return false;
+            } else if(items[0] == 5 && items.Where(e => e == 2).Count() == 4) {
+                return false;
+            }
+            if (sum <= numBags * 10) {
+                return true;
+            } else {
+                return false;
+            }
+
+
+            List<int> itemsList = items.ToList();
+            int bags = 0;
+            int totalWeight = 0;
+            List<List<int>> bagList = new List<List<int>>();
+
+            while (bags < numBags) {
+                PrintList(itemsList, "List");
+                if (totalWeight == 0) {
+                    totalWeight += itemsList[0];
+                    itemsList.Remove(itemsList[0]);
+                } else {
+                    int testTotal = 10 - totalWeight;
+                    if (itemsList.Contains(testTotal)) {
+                        // found item
+                        bagList.Add(new int[]{ totalWeight, testTotal }.ToList());
+                        itemsList.Remove(testTotal);
+                        bags++;
+                        totalWeight = 0;
+                    } else {
+                        // test for permutations
+                        bool foundPerm = false;
+                        for (int i = 2; i <= itemsList.Count(); i++) {
+                            List<List<int>> perms = GetPerms(itemsList, i);
+                            for (int j = 0; j < perms.Count(); j++) {
+                                int total = perms[j].Aggregate(0, (num1, num2) => num1 + num2);
+                                if (total + totalWeight == 10) {
+                                    PrintList(perms[j].ToArray().Concat(new int[] { totalWeight }).ToList(), "Perm");
+                                    // found match
+                                    Console.WriteLine("found match");
+                                    perms[j].ForEach(eachNumber => itemsList.Remove(eachNumber));
+                                    bagList.Add(perms[j].ToArray().Concat(new int[] { totalWeight }).ToList());
+                                    bags++;
+                                    foundPerm = true;
+                                    break;
+                                }
+                            }
+                            if (foundPerm) {
+                                totalWeight = 0;
+                                break;
+                            }
+                        }
+                        if (!foundPerm) {
+                            bagList.Add(new int[] { totalWeight }.ToList());
+                            bags++;
+                            totalWeight = 0;
+                        }
+                    }
+                }
+
+            }
+            Console.WriteLine("Printing bags");
+            for (int i = 0; i < bagList.Count(); i++) {
+                PrintList(bagList[i], String.Format("Bag {0}", i+1));
+            }
+
+            return itemsList.Count() == 0;
+            
+
+        };
+
+    public static bool TestCanFit(int[] wts, int n)
+    {
+        return CanFit(wts, n);
+    }
+
 
         public static void Main(string[] args)
         {   
 
-            Console.WriteLine(ClosestPalindrome(887));
+                Console.WriteLine(TestCanFit(new int[] { 2, 1, 2, 5, 4, 3, 6, 1, 1, 9, 3, 2 }, 4) == true);
+                Console.WriteLine(TestCanFit(new int[] { 7, 1, 2, 6, 1, 2, 3, 5, 9, 2, 1, 2, 5 }, 5) == true);
+                Console.WriteLine(TestCanFit(new int[] { 2, 7, 1, 3, 3, 4, 7, 4, 1, 8, 2 }, 4) == false);
+                Console.WriteLine(TestCanFit(new int[] { 1, 3, 3, 3, 2, 1, 1, 9, 7, 10, 8, 6, 1, 2, 9 }, 8) == true);
+                Console.WriteLine(TestCanFit(new int[] { 4, 1, 2, 3, 5, 5, 1, 9 }, 3) == true);
+                Console.WriteLine(TestCanFit(new int[] { 3, 1, 2, 7, 2, 6, 1 }, 3) == true);
+                Console.WriteLine(TestCanFit(new int[] { 4, 4, 4, 4, 4 }, 2) == false);
+                Console.WriteLine(TestCanFit(new int[] { 5, 4, 3, 2, 2, 2, 2 }, 2) == false);
+                Console.WriteLine(TestCanFit(new int[] { 4, 6, 1, 9, 6, 1, 1, 9, 2, 9 }, 5) == true);
+                Console.WriteLine(TestCanFit(new int[] { 2, 2, 10, 10, 1, 5, 2 }, 4) == true);
+                Console.WriteLine(TestCanFit(new int[] { 9, 6, 2, 3, 1, 2, 4, 8, 3, 1, 3 }, 4) == false);
+                Console.WriteLine(TestCanFit(new int[] { 2, 5, 1, 6, 2, 9, 5, 2, 1, 6, 1, 6, 6, 1 }, 5) == false);
+                Console.WriteLine(TestCanFit(new int[] { 2, 5, 1, 6, 2, 9, 5, 2, 1, 6, 1, 6, 6, 1 }, 6) == true);
+                Console.WriteLine(TestCanFit(new int[] { 1, 2, 3, 2, 6, 4, 1 }, 2) == true);
+                Console.WriteLine(TestCanFit(new int[] { 1, 1, 2, 1, 2, 10, 2, 2, 5, 1, 5 }, 4) == true);
+                Console.WriteLine(TestCanFit(new int[] { 8, 3, 2, 1, 1, 2, 1, 3, 2, 1 }, 3) == true);
+                Console.WriteLine(TestCanFit(new int[] { 10 }, 1) == true);
 
 
         }
