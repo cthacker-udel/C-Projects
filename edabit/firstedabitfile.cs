@@ -744,27 +744,157 @@ namespace Edabit {
         return CanFit(wts, n);
     }
 
+    public static Func<int, int, int> BlockPlayer = (int x, int y) => {
+
+        char[,] board = new char[3,3]{{' ', ' ', ' '},{' ', ' ', ' '},{' ', ' ', ' '}};
+
+        int count = 0;
+        for (int i = 0; i < board.GetLength(1); i++) {
+
+            for (int j = 0; j < board.GetLength(1); j++) {
+
+                if (count == x || count == y) {
+                    board[i,j] = 'x';
+                }
+                count++;
+
+            }
+
+        }
+        // analyze board
+        // rows
+        int col = 0;
+        String result = "";
+        for (int i = 0; i < board.GetLength(1); i++) {
+            result = "";
+            for (int j = 0; j < board.GetLength(1); j++) {
+                result += board[i, j];
+                if (board[i, j] == ' ') {
+                    col = j;
+                }
+            }
+            if (result.Count(e => e == ' ') == 1) {
+                return (3 * result.IndexOf(' ')) + col;
+            }
+            col = 0;
+        }
+        // columns
+        for (int i = 0; i < board.GetLength(1); i++) {
+            result = "";
+            for (int j = 0; j < board.GetLength(1); j++) {
+                // [0][0], [1][0], [2][0]
+                result += board[j,i];
+                if (board[j, i] == ' ') {
+                    col = i;
+                }
+            }
+            if (result.Count(eachelem => eachelem == ' ') == 1) {
+                Console.WriteLine("3 * {0} + {1}", result.IndexOf(' '), col);
+                return (3 * result.IndexOf(' ')) + col;
+            }
+        }
+        // diags
+        result = "" + board[0,0] + board[1,1] + board[2,2];
+        if (result.Count(e => e == ' ') == 1) {
+            switch (result.IndexOf(' ')) {
+                case 0:
+                    return 0;
+                case 1:
+                    return 4;
+                case 2:
+                    return 8;
+            }
+        }
+        result = "" + board[0,2] + board[1,1] + board[2,0];
+        if (result.Count(eachelem => eachelem == ' ') == 1) {
+            switch (result.IndexOf(' ')) {
+                case 0:
+                    return 6;
+                case 1:
+                    return 4;
+                case 2:
+                    return 2;
+            }
+        }
+
+        return -1;
+    };
+
+    public static Func<String, Boolean> ValidRondo = (String message) => {
+
+        char[] letters = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+        int index = 1;
+
+        if (message[0] == 'A' && message[message.Length - 1] == 'A' && message.Length > 1) {
+            // valid, continue to next step
+            String sequence = "";
+            char startingLetter = letters[index];
+            for (int i = 0; i < message.Length - 1; i++) {
+                if (message[i] == 'A') {
+                    for (int j = i + 1; j < message.Length; j++) {
+                        if (message[j] != 'A') {
+                            sequence += message[j];
+                        } else {
+                            break;
+                        }
+                    }
+                    //Console.WriteLine("sequence = {0} and startingLetter = {1}", sequence, startingLetter);
+                    if (sequence.Length > 0 && sequence.Length == 1) {
+                        if (sequence[0] == startingLetter) {
+                            i += 1;
+                            if (index == 25) {
+                                index = 1;
+                            } else {
+                                index++;
+                            }
+                            startingLetter = letters[index];
+                            sequence = "";
+                            continue;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    };
+
+    public static Func<String, Int32, String, Int32> License = (String name, int agents, String others) => {
+
+        List<String> people = others.Split(' ').ToList();
+        int origSize = people.Count();
+        people.Add(name);
+        people.Sort(Comparer<String>.Create(
+            (person1, person2) => person1[0].ToString().CompareTo(person2[0].ToString())
+        ));
+        int time = 0;
+        while (people.Count() > 0) {
+            for (int i = 0; i < agents; i++) {
+                if (people.Count() == 0) {
+                    break;
+                }
+                else if (people[0].Equals(name)) {
+                    return time + 20;
+                } else {
+                    people.Remove(people[0]);
+                }
+            }
+            time += 20;
+        }
+        return (origSize * 20) + 20;
+
+    };
+
 
         public static void Main(string[] args)
         {   
 
-                Console.WriteLine(TestCanFit(new int[] { 2, 1, 2, 5, 4, 3, 6, 1, 1, 9, 3, 2 }, 4) == true);
-                Console.WriteLine(TestCanFit(new int[] { 7, 1, 2, 6, 1, 2, 3, 5, 9, 2, 1, 2, 5 }, 5) == true);
-                Console.WriteLine(TestCanFit(new int[] { 2, 7, 1, 3, 3, 4, 7, 4, 1, 8, 2 }, 4) == false);
-                Console.WriteLine(TestCanFit(new int[] { 1, 3, 3, 3, 2, 1, 1, 9, 7, 10, 8, 6, 1, 2, 9 }, 8) == true);
-                Console.WriteLine(TestCanFit(new int[] { 4, 1, 2, 3, 5, 5, 1, 9 }, 3) == true);
-                Console.WriteLine(TestCanFit(new int[] { 3, 1, 2, 7, 2, 6, 1 }, 3) == true);
-                Console.WriteLine(TestCanFit(new int[] { 4, 4, 4, 4, 4 }, 2) == false);
-                Console.WriteLine(TestCanFit(new int[] { 5, 4, 3, 2, 2, 2, 2 }, 2) == false);
-                Console.WriteLine(TestCanFit(new int[] { 4, 6, 1, 9, 6, 1, 1, 9, 2, 9 }, 5) == true);
-                Console.WriteLine(TestCanFit(new int[] { 2, 2, 10, 10, 1, 5, 2 }, 4) == true);
-                Console.WriteLine(TestCanFit(new int[] { 9, 6, 2, 3, 1, 2, 4, 8, 3, 1, 3 }, 4) == false);
-                Console.WriteLine(TestCanFit(new int[] { 2, 5, 1, 6, 2, 9, 5, 2, 1, 6, 1, 6, 6, 1 }, 5) == false);
-                Console.WriteLine(TestCanFit(new int[] { 2, 5, 1, 6, 2, 9, 5, 2, 1, 6, 1, 6, 6, 1 }, 6) == true);
-                Console.WriteLine(TestCanFit(new int[] { 1, 2, 3, 2, 6, 4, 1 }, 2) == true);
-                Console.WriteLine(TestCanFit(new int[] { 1, 1, 2, 1, 2, 10, 2, 2, 5, 1, 5 }, 4) == true);
-                Console.WriteLine(TestCanFit(new int[] { 8, 3, 2, 1, 1, 2, 1, 3, 2, 1 }, 3) == true);
-                Console.WriteLine(TestCanFit(new int[] { 10 }, 1) == true);
+                    Console.WriteLine(License("Eric", 2, "Adam Caroline Rebecca Frank"));
 
 
         }
