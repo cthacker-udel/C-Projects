@@ -1110,9 +1110,118 @@ namespace Edabit {
         return $"${rounded}";
     };
 
+    public class Smoothies {
+
+        private Dictionary<string, double> costs = new Dictionary<string, double>(){
+            { "Strawberries", 1.50 },
+            { "Banana", .50},
+            { "Mango", 2.50 },
+            { "Blueberries", 1.00 },
+            { "Raspberries", 1.00 },
+            { "Apple", 1.75 },
+            { "Pineapple", 3.50 }
+        };
+
+        public Smoothies(string[] ingredients) {
+            this.ingredients = ingredients.ToList();
+        }
+
+        public List<string> ingredients = new List<string>();
+        string[] Ingredients {
+            get{
+                return this.ingredients.ToArray();
+            } set{
+                this.ingredients = value.ToList();
+            }
+        }
+
+        public string GetCost() {
+            return "";
+        }
+
+        public double GetPrice() {
+            return Math.Round(double.Parse(this.GetCost()) + (double.Parse(this.GetCost()) * 1.5), 2);
+        }
+
+        public string StripBerries(string word) {
+            return word.Replace("berries", "berry");
+        }
+
+        public String GetName() {
+
+            List<string> sortedIngredients = this.ingredients;
+            sortedIngredients.Sort();
+            sortedIngredients = sortedIngredients.Select(e => e.Replace("berries", "berry")).ToList();
+            if (sortedIngredients.Count > 1) {
+                // fusion
+                return $"{String.Join(" ", sortedIngredients)} Fusion";
+            } else {
+                return $"{sortedIngredients[0]} Smoothie";
+            }
+
+        }
+
+
+    }
+
+    public static Func<List<int>, List<int>, bool> compareToIntLists = (List<int> list1, List<int> list2) => {
+
+
+      for (int i = 0; i < list1.Count; i++) {
+          if (list2[i] != list1[i]) {
+              return false;
+          }
+      }
+      return true;
+
+    };
+
+    public static Func<string, string, bool> CanComplete = (string halfword, string fullword) => {
+
+        char[] fullWordLetters = fullword.ToCharArray();
+        List<int> indexes = new List<int>();
+        int currFullIndex = 0;
+        bool foundLetter = false;
+        for (int i = 0; i < halfword.Length; i++) {
+
+            char currLetter = halfword[i];
+            for (int j = 0; j < fullWordLetters.Length; j++) {
+
+                if (fullWordLetters[j] == currLetter) {
+                    fullWordLetters[j] = ' ';
+                    indexes.Add(j);
+                    foundLetter = true;
+                    List<int> indexesClone = new List<int>(indexes);
+                    indexesClone.Sort();
+                    if (!compareToIntLists(indexesClone, indexes)) {
+                        return false;
+                    }
+                    break;
+                }
+
+            }
+            if (!foundLetter) {
+                return false;
+            }
+            foundLetter = true;
+
+        }
+        return indexes.Count == halfword.Length;
+
+
+    };
+
         public static void Main(string[] args)
         {   
-            Console.WriteLine(OverTime(new [] { 16, 18, 30, 1.8 }));
+            Console.WriteLine(CanComplete("butl", "beautiful") ==true);
+            Console.WriteLine(CanComplete("butlz", "beautiful") ==false);//="'z' does not exist in the word `beautiful`")]
+            Console.WriteLine(CanComplete("tulb", "beautiful") ==false);//="although 't', 'u', 'l' and 'b' incorrectly ordered")]
+            Console.WriteLine(CanComplete("bbutl", "beautiful") ==false);//="too many 'b's, beautiful has only 1")]
+            Console.WriteLine(CanComplete("sg", "something") ==true);
+            Console.WriteLine(CanComplete("sgi", "something") ==false);//="out of order")]
+            Console.WriteLine(CanComplete("sing", "something") ==true);
+            Console.WriteLine(CanComplete("siing", "something") ==false);//="too many i's")]
+
         }
     }
 
