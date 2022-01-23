@@ -1211,17 +1211,171 @@ namespace Edabit {
 
     };
 
+    public static Func<string, string, bool> AnagramStr = (string word1, string word2) => {
+
+        if (word1.Length > word2.Length) {
+            return false;
+        } else {
+            for (int i = 0; i < word2.Length - word1.Length; i++) {
+                string substr = word2.Substring(i, word1.Length);
+                List<char> charList = substr.ToCharArray().ToList();
+                charList.Sort();
+                string sortedSubstr = charList.Aggregate("", (letter1, letter2) => letter1 + "" + letter2);
+                string sortedWord1 = word1.ToCharArray().OrderBy(e => e).Aggregate("", (elem1, elem2) => elem1 + "" + elem2);
+                if (sortedSubstr.Equals(sortedWord1)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+    };
+
+    public static Func<string[], string, string[]> SortContacts = (string[] contacts, string specification) => {
+
+        if (contacts == null || contacts.Length == 0) {
+            return new string[]{};
+        }
+        else if (specification[0] == 'A') {
+            return contacts.OrderBy(e => e.Split(" ")[1]).ToArray();
+        } else {
+            return contacts.OrderByDescending(e => e.Split(" ")[1]).ToArray();
+        }
+
+    };
+
+
+    public static Func<int[][], bool> IsMagicSquare = (int[][] magicSquare) => {
+
+        HashSet<int> set = new HashSet<int>();
+        int total = 0;
+        for (int i = 0; i < magicSquare.Length; i++) {
+
+            int[] row = magicSquare[i];
+            total = row.Aggregate(0, (elem1, elem2) => elem1 + elem2);
+            set.Add(total);
+            if (set.Count() > 1) {
+                return false;
+            }
+
+        }
+        total = 0;
+        for (int i = 0; i < magicSquare.Length; i++) {
+            for (int j = 0; j < magicSquare[i].Length; j++) {
+                total += magicSquare[j][i]; 
+            }
+            set.Add(total);
+            if (set.Count() > 1) {
+                return false;
+            }
+            total = 0;
+        }
+        total = 0;
+        for (int i = 0; i < magicSquare.Length; i++) {
+            total += magicSquare[i][i];
+        }
+        set.Add(total);
+        if (set.Count() > 1) {
+            return false;
+        }
+        total = 0;
+        for (int j = magicSquare[0].Length - 1, i = 0; j > -1 && i < magicSquare.Length; j--, i++) {
+            total += magicSquare[i][j];
+        }
+        set.Add(total);
+        if (set.Count() > 1) {
+            return false;
+        }
+        return true;
+        
+
+    };
+
+    public static Func<string, int[]> TrackRobot = (string tape) => {
+
+        int x = 0;
+        int y = 0;
+        int direction = 1; // 0 - north, 1 - east, 2 - south, 3 - west
+        for (int i = 0; i < tape.Length; i++) {
+            char theCommand = tape[i];
+            switch (theCommand) {
+                case '.': {
+                    switch (direction) {
+                        case 0: {
+                            y++;
+                            break;
+                        }
+                        case 1: {
+                            x++;
+                            break;
+                        }
+                        case 2: {
+                            y--;
+                            break;
+                        }
+                        case 3: {
+                            x--;
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case '<': {
+                    switch (direction) {
+                        case 0: {
+                            direction = 3;
+                            break;
+                        }
+                        case 1: {
+                            direction = 0;
+                            break;
+                        }
+                        case 2: {
+                            direction = 1;
+                            break;
+                        }
+                        case 3: {
+                            direction = 2;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case '>': {
+                    switch (direction) {
+                        case 0: {
+                            direction = 1;
+                            break;
+                        }
+                        case 1: {
+                            direction = 2;
+                            break;
+                        }
+                        case 2: {
+                            direction = 3;
+                            break;
+                        }
+                        case 3: {
+                            direction = 0;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+        return new int[]{x, y};
+    };
+
         public static void Main(string[] args)
         {   
-            Console.WriteLine(CanComplete("butl", "beautiful") ==true);
-            Console.WriteLine(CanComplete("butlz", "beautiful") ==false);//="'z' does not exist in the word `beautiful`")]
-            Console.WriteLine(CanComplete("tulb", "beautiful") ==false);//="although 't', 'u', 'l' and 'b' incorrectly ordered")]
-            Console.WriteLine(CanComplete("bbutl", "beautiful") ==false);//="too many 'b's, beautiful has only 1")]
-            Console.WriteLine(CanComplete("sg", "something") ==true);
-            Console.WriteLine(CanComplete("sgi", "something") ==false);//="out of order")]
-            Console.WriteLine(CanComplete("sing", "something") ==true);
-            Console.WriteLine(CanComplete("siing", "something") ==false);//="too many i's")]
-
+            TrackRobot("....................................................................................................").ToList().ForEach(Console.Write);
         }
     }
 
