@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Animals;
+using System.Text;
 namespace Edabit {
 
 
@@ -1373,9 +1374,48 @@ namespace Edabit {
         return new int[]{x, y};
     };
 
+    public static Func<char[], char[]> QuickReverseString = (char[] letters) => {
+        Array.Reverse(letters);
+        return letters;
+    };
+
+    public static Func<string, string> SpecialReverseString = (string theWord) => {
+
+        List<int> upperCase = new List<int>();
+        List<int> spaces = new List<int>();
+        List<int> lowerCase = new List<int>();
+        for (int i = 0; i < theWord.Length; i++) {
+            if (theWord[i] == ' ') {
+                spaces.Add(i);
+            } else if (Char.IsUpper(theWord[i])) {
+                upperCase.Add(i);
+            } else {
+                lowerCase.Add(i);
+            }
+        }
+        char[] revWord = theWord.Split(' ').Aggregate("", (e1, e2) => e1 + e2).ToCharArray();;
+        Array.Reverse(revWord);
+        string realWord = revWord.Aggregate("", (e1, e2) => e1 + "" + e2);
+        StringBuilder sb = new StringBuilder();
+        int ind = 0;
+        for (int i = 0; i < theWord.Length; i++) {
+            if (spaces.Contains(i)) {
+                sb.Append(" ");
+            } else {
+                if (upperCase.Contains(i)) {
+                    sb.Append(Char.ToUpper(revWord[ind++]));
+                } else {
+                    sb.Append(Char.ToLower(revWord[ind++]));
+                }
+            }
+        }
+        return sb.ToString();
+
+    };
+
         public static void Main(string[] args)
         {   
-            TrackRobot("....................................................................................................").ToList().ForEach(Console.Write);
+            Console.WriteLine(SpecialReverseString("Hello World!"));
         }
     }
 
