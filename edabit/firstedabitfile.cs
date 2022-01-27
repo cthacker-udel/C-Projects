@@ -1413,9 +1413,46 @@ namespace Edabit {
 
     };
 
+    public static Func<string, int> SunLoungers = (string beach) => {
+
+        int count = 0;
+        char[] beachArr = beach.ToCharArray();
+        for (int i = 0; i < beachArr.Length; i++) {
+            bool left = false;
+            bool right = false;
+            if (i > 0) {
+                // check left
+                left = beachArr[i - 1] == '0';
+            } else if (i == 0) {
+                left = true;
+            }
+
+            if (i < (beach.Length - 1)) {
+                right = beachArr[i + 1] == '0';
+            } else if(i == beach.Length - 1) {
+                right = true;
+            }
+            if (beachArr[i] == '1') {
+                left = false;
+                right = false;
+                continue;
+            }
+            if (left && right) {
+                count++;
+                beachArr[i] = '1';
+            } else {
+                left = false;
+                right = false;
+            }
+        }
+        return count;
+
+    };
+
         public static void Main(string[] args)
         {   
-            Console.WriteLine(SpecialReverseString("Hello World!"));
+            Console.WriteLine(SunLoungers("10001"));
+            Console.WriteLine(SunLoungers("000"));
         }
     }
 
