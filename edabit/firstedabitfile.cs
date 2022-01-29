@@ -1449,10 +1449,208 @@ namespace Edabit {
 
     };
 
+    public static Func<int[], int> Score = (int[] dice) => {
+
+        int total = 0;
+        Dictionary<int, int> rolls = new Dictionary<int, int>();
+        Dictionary<int, int> score = new Dictionary<int, int>();
+        foreach(int die in dice) {
+            if (rolls.ContainsKey(die)) {
+                rolls[die] = rolls[die] + 1;
+            } else {
+                rolls.Add(die, 1);
+            }
+        }
+        int[] values = new int[]{1, 2, 3, 4, 5, 6};
+        foreach(int value in values) {
+
+            if (rolls.ContainsKey(value)) {
+                int amt = rolls[value];
+                if (amt >= 3) {
+                    while (amt >= 3) {
+                        if (value == 1) {
+                            total += 1000;
+                            amt -= 3;
+                        } else {
+                            total += (100 * value);
+                            amt -= 3;
+                        }
+                    }
+                    if (amt == 1 && (value == 1 || value == 5)) {
+                        if (value == 1) {
+                            total += 100;
+                        } else {
+                            total += 50;
+                        }
+                    }
+                } else if(value == 1 || value == 5) {
+                    while (amt > 0) {
+                        if (value == 1) {
+                            total += 100;
+                            amt -= 1;
+                        } else {
+                            total += 50;
+                            amt -= 1;
+                        }
+                    }
+                }
+            }
+
+        }
+        return total;
+    };
+  
+  public static Func<int,int> AddTripleRepeatSum = (int repeatValue) => {
+    
+      int sum = 0;
+     if(repeatValue == 1) {
+      sum += 1000;
+      } else if(repeatValue == 6) {
+      sum+= 600;
+      } else if(repeatValue == 5) {
+      sum+= 500;
+      } else if(repeatValue == 4) {
+        sum+= 400;
+      }  else if(repeatValue == 3) {
+        sum+= 300;
+      } else if(repeatValue == 2) {
+        sum+= 200;
+    }
+    
+    return sum;
+  };
+  
+  //(5,5,5,3,3)
+  public static Func<int[], int> FindTripleRepeat = (int[] dice) => {
+    int Triplerepeat;
+    int repeatValue = 0;
+    int repeatCount = 0;
+    
+    int[] newDice;
+    
+    bool tripleRepeatFound = false;
+    for(int i = 0; i < dice.Length; i++) {   
+      //look for three in a row
+
+        Triplerepeat = dice[i];
+
+        for(int j = i+1; j < dice.Length; j++) {
+            if(dice[i] == Triplerepeat) {
+              repeatCount++; 
+              repeatValue = dice[i];
+              if(repeatCount == 3) {
+                Triplerepeat = dice[i];
+                tripleRepeatFound = true;
+                break;
+              }
+            }            
+          }
+      
+          if(tripleRepeatFound) break;
+    }
+    return repeatValue;
+  };
+
+
+  public static Func<int[], int> scorev2 = (int[] dice) => {
+
+      Dictionary<int, int> deez = new Dictionary<int, int>();
+      int repeatValue = FindTripleRepeat(dice);
+      int sum = 0;
+      
+      for(int i = 0; i < dice.Length; i++) {
+        if(dice[i] == 5) {
+          sum += 50;
+        }
+        if(dice[i] == 1) {
+          sum += 100;
+        }
+      }
+    
+      sum += AddTripleRepeatSum(repeatValue);
+      return sum;
+
+  };
+
+  public static Func<string, int, int, string> CraftString = (string theWord, int width, int placerIndex) => {
+
+      StringBuilder sb = new StringBuilder();
+      int index = 0;
+      while (sb.Length < width) {
+          if (theWord.Length > 0 && index >= placerIndex) {
+              sb.Append(theWord[0]);
+              theWord = theWord.Substring(1);
+          } else {
+              sb.Append(" ");
+          }
+          index++;
+      }
+      return sb.ToString();
+
+  };
+
+  public static Func<string, int, string[]> NewsAtTen = (string theWord, int width) => {
+
+      List<string> news = new List<string>();
+      int placementIndex = width;
+      while (placementIndex >= 0) {
+            news.Add(CraftString(theWord, width, placementIndex));
+            placementIndex--;
+      }
+      placementIndex++;
+      while (theWord.Length > 0) {
+          theWord = theWord.Substring(1);
+          news.Add(CraftString(theWord, width, placementIndex));
+      }
+      placementIndex = -1;
+      news.Add(CraftString(theWord, width, placementIndex));
+      return news.ToArray();
+
+  };
+
+  public static Func<string, string, bool> InstrumentRange = (string instrument, string note) => {
+
+      string[] letters = new string[]{"C", "D", "E", "F", "G", "A", "B"};
+      int rangeStart = 0;
+      List<string> frequencies = new List<string>();
+      while (rangeStart <= 8) {
+
+            if(rangeStart == 0) {
+                frequencies.Add("A0");
+                frequencies.Add("B0");
+                rangeStart++;
+                continue;
+            } else if (rangeStart == 8) {
+                frequencies.Add("C8");
+                break;
+            } else {
+                for (int i = 0; i < letters.Count(); i++) {
+                    frequencies.Add($"{letters[i]}{rangeStart}");
+                }
+                rangeStart++;
+            }
+        }
+        Dictionary<string, string[]> instrumentRanges = new Dictionary<string, string[]>();
+        instrumentRanges.Add("Piccolo", new string[]{"D4", "C7"});
+        instrumentRanges.Add("Tuba", new string[]{"D1", "F4"});
+        instrumentRanges.Add("Guitar", new string[]{"E3", "E6"});
+        instrumentRanges.Add("Piano", new string[]{"A0", "C8"});
+        instrumentRanges.Add("Violin", new string[]{"G3", "A7"});
+        int rangeEnd = 0;
+        int currIndex = 0;
+        rangeStart = frequencies.IndexOf(instrumentRanges[instrument][0]);
+        rangeEnd = frequencies.IndexOf(instrumentRanges[instrument][1]);
+        currIndex = frequencies.IndexOf(note);
+        return currIndex >= rangeStart && currIndex <= rangeEnd;
+
+  };
+
+
+
+
         public static void Main(string[] args)
         {   
-            Console.WriteLine(SunLoungers("10001"));
-            Console.WriteLine(SunLoungers("000"));
+            Console.WriteLine(InstrumentRange("Violin", "G6"));
         }
     }
 
