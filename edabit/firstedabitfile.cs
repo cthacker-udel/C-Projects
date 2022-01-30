@@ -1645,6 +1645,14 @@ namespace Edabit {
 
   };
 
+  public static Func<int[], int[]> SortNumsAscending = (int[] arr) => {
+
+      List<int> arrList = arr.ToList();
+      arrList.Sort();
+      return arrList.ToArray();
+
+  };
+
 
 
 
