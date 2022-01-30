@@ -1645,11 +1645,54 @@ namespace Edabit {
 
   };
 
-  public static Func<int[], int[]> SortNumsAscending = (int[] arr) => {
+  public static Func<int, int, int> CalculateSteps = (int number, int digit) => {
+      String numString = "".PadRight(number.ToString().Length, digit.ToString()[0]);
+      int totalDist = 0;
+      String convertedNumber = number.ToString();
+      for (int i = 0; i < convertedNumber.Length; i++) {
+          char charDig = convertedNumber[i];
+          // calculate distance between charDig and digit
+          totalDist += Math.Abs(int.Parse(charDig+"") - digit);  
+      }
+      return totalDist;
+  };
 
+  public static Func<int, int> SmallestTransform = (int number) => {
+      int min = number.ToString().ToCharArray().Select(e => int.Parse(e+"")).Aggregate(1, (e1, e2) => e1 + e2);
+      int[] digits = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+      for (int i = 0; i < digits.Length; i++) {
+          min = Math.Min(min, CalculateSteps(number, digits[i]));
+      }
+      return min;
+  };
+
+  public static Func<int[], int[]> SortNumsAscending = (int[] arr) => {
       List<int> arrList = arr.ToList();
       arrList.Sort();
       return arrList.ToArray();
+  };
+
+  public static Func<string, string> IncrementString = (string numString) => {
+
+
+      if (Char.IsDigit(numString[numString.Length - 1])) {
+          // increment number
+          string number = "";
+          while (numString.Length > 0 && Char.IsDigit(numString[numString.Length - 1])) {
+              if (Char.IsDigit(numString[numString.Length - 1])) {
+                  number = numString[numString.Length - 1] + number;
+                  numString = numString.Substring(0, numString.Length - 1);
+              }
+          }
+          // acquired number
+          int numberLength = number.Length;
+          int typeCastedNumber = int.Parse(number) + 1;
+          String convertedNumber = $"{typeCastedNumber}".PadLeft(numberLength, '0');
+          return numString + convertedNumber;
+
+      } else {
+          return numString + '1';
+      }
 
   };
 
@@ -1658,7 +1701,7 @@ namespace Edabit {
 
         public static void Main(string[] args)
         {   
-            Console.WriteLine(InstrumentRange("Violin", "G6"));
+            Console.WriteLine(IncrementString("foobar0009"));
         }
     }
 
