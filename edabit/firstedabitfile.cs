@@ -1697,11 +1697,77 @@ namespace Edabit {
   };
 
 
+  public static Func<int[], bool> CompleteBracelet = (int[] bracelet) => {
+
+      String combinedString = bracelet.Select(e => e.ToString()).Aggregate("", (e1, e2) => e1 + "" + e2);
+      String substring = "";
+      for (int i = 0; i <= combinedString.Length / 2; i++) {
+          for (int j = 0; j <= combinedString.Length / 2; j++) {
+              substring += combinedString[j];
+              if (substring.Length > 1) {
+                  int count = Regex.Matches(combinedString, substring).Count;
+                  if (count > 1 && (substring.Length * count) == combinedString.Length) {
+                      return true;
+                  }
+              }
+          }
+          substring = "";
+      }
+      return false;
+
+  };
+
+  public static Func<string, string, string> hidden_anagram = (string thePhrase, string theAnagram) => {
+
+      theAnagram = theAnagram.ToCharArray().Where(e => Char.IsLetter(e)).Select(e => Char.ToLower(e)).Aggregate("", (e1, e2) => e1 + "" + e2);
+      List<char> anagramList = theAnagram.ToCharArray().ToList();
+      anagramList.Sort();
+      string sortedAnagram = anagramList.Aggregate("", (e1, e2) => e1 + "" + e2);
+      thePhrase = thePhrase.ToCharArray().Where(e => Char.IsLetter(e)).Select(e => Char.ToLower(e)).Aggregate("", (e1, e2) => e1 + "" + e2);
+      for (int i = 0; i < thePhrase.Length - theAnagram.Length; i++) {
+          string subString = thePhrase.Substring(i, theAnagram.Length);
+          List<char> subStringArr = subString.ToCharArray().ToList();
+          subStringArr.Sort();
+          if (subStringArr.Aggregate("", (e1, e2) => e1 + e2) == sortedAnagram) {
+              return thePhrase.Substring(i, theAnagram.Length);
+          }
+      }
+      return "noutfond";
+  };
+
+  public static Func<string, int> TitleToNumber = (string excelColumn) => {
+
+      string alpha = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      string reversedString = excelColumn.ToCharArray().Reverse().Aggregate("", (e1, e2) => e1 + "" + e2);
+      int total = 0;
+      for (int i = 0; i < excelColumn.Length; i++) {
+          char letterAt = reversedString[i];
+          if (i == 0) {
+              total += alpha.IndexOf(letterAt + "");
+          } else {
+            total += (int)((Math.Pow(26, i)) * alpha.IndexOf(letterAt + ""));
+          }
+      }
+      return total;
+
+  };
+
+  public static Func<string, bool> ValidPhoneNumber = (string phoneNumber) => {
+      Console.WriteLine($"{phoneNumber}")
+      Regex expr = new Regex("[(]\\d{3}[)] \\d{3}-\\d{4}");
+      return expr.Match(phoneNumber).Success;
+  };
+
+  public static Func<string, string> orderWeight = (string strng) => {
+      
+  }
+
+
 
 
         public static void Main(string[] args)
         {   
-            Console.WriteLine(IncrementString("foobar0009"));
+            Console.WriteLine(ValidPhoneNumber("(1232) 456-7890"));
         }
     }
 
