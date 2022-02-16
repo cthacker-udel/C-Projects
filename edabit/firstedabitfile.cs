@@ -1753,21 +1753,96 @@ namespace Edabit {
   };
 
   public static Func<string, bool> ValidPhoneNumber = (string phoneNumber) => {
-      Console.WriteLine($"{phoneNumber}")
+      Console.WriteLine($"{phoneNumber}");
       Regex expr = new Regex("[(]\\d{3}[)] \\d{3}-\\d{4}");
       return expr.Match(phoneNumber).Success;
   };
 
+  public static Func<string, int> GetWeight = (string strng) => {
+      return strng.ToCharArray().Select(e => Int32.Parse(e + "")).Aggregate(0, (e1, e2) => e1 + e2);
+  };
+
+  public static Func<string, int> GetAlphabeticWeight = (string theString) => {
+      return Int32.Parse(theString[0].ToString());
+  };
+
   public static Func<string, string> orderWeight = (string strng) => {
-      
-  }
+      Console.WriteLine($"testing {strng}");
+      List<string> splitString = strng.Split(" ").ToList();
+      splitString.Sort((string elem1, string elem2) => {
+          int weight1 = GetWeight(elem1);
+          int weight2 = GetWeight(elem2);
+          if (weight1 == weight2) {
+              string elem1Tmp = elem1;
+              string elem2Tmp = elem2;
+              while (elem1Tmp.Length > 0 && elem2Tmp.Length > 0) {
+                int alphaOne = GetAlphabeticWeight(elem1);
+                int alphaTwo = GetAlphabeticWeight(elem2);
+                Console.WriteLine($"Alphaone = {alphaOne} and elem1 = {elem1}");
+                Console.WriteLine($"AlphaTwo = {alphaTwo} and elem2 = {elem2}");
+                if (alphaOne > alphaTwo) {
+                    return 1;
+                } else if(alphaOne < alphaTwo) {
+                    return -1;
+                } else {
+                    elem1Tmp = elem1Tmp.Substring(1);
+                    elem2Tmp = elem2Tmp.Substring(1);
+                    continue;
+                }
+              }
+              if (elem1Tmp.Length == 0 && elem2Tmp.Length > 0) {
+                  return 1;
+              } else if(elem1Tmp.Length > 0 && elem2Tmp.Length == 0) {
+                  return -1;
+              } else {
+                  return 0;
+              }
+          }
+          else {
+              return weight1 > weight2 ? 1 : weight1 < weight2 ? -1 : 0;
+          }
+      });
+      return splitString.ToArray().Aggregate("", (e1, e2) => e1 + " " + e2).Trim();
+  };
+
+  public static Func<double[], double> SumArray = (double[] array) => {
+
+      return array.Aggregate(0.0, (e1, e2) => e1 + e2);
+
+  };
+
+  public static Func<List<string>, List<string>> Number = (List<string> lines) => {
+
+      int index = 1;
+      return lines.Select(e => $"{index++}: {e}").ToList();
+
+  };
+
+  public static Func<int, int, string> AddBinary = (int a, int b) => {
+
+      return Convert.ToString(a + b, 2);
+
+  };
+
+  public static Func<long, int> findNextSquare = (long perfectSquare) => {
+
+      double sqrt = Math.Sqrt(perfectSquare);
+      long value;
+      bool conversionComplete = long.TryParse(sqrt.ToString(), out value);
+      if (conversionComplete) {
+        value += 1;
+        return (int)Math.Pow(value, 2);
+      }
+      return -1;
+
+  };
 
 
 
 
         public static void Main(string[] args)
         {   
-            Console.WriteLine(ValidPhoneNumber("(1232) 456-7890"));
+            Console.WriteLine(orderWeight("193275 11934 123752 432038 91823 30254 319576 400640 407175 214405 122152 280802 84893 330837 291184 426107 256712 481752 438351 418099 18"));
         }
     }
 
