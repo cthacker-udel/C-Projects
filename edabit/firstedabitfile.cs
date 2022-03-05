@@ -1946,12 +1946,216 @@ namespace Edabit {
 
   }
 
+  public static long digPow(int n, int p) {
+
+      int pow = p;
+      long result = n.ToString().ToCharArray().Select(e => (long)Math.Round(Math.Pow(Int32.Parse(e.ToString()), pow++))).Sum();
+      if (result % n != 0) {
+          return -1;
+      } else {
+          return result / n;
+      }
+
+  }
+
+  public double[] Tribonacci(double[] signature, int n) {
+
+      if (n == 0) {
+          return new double[]{};
+      }
+      else if (n <= signature.ToList().Count()) {
+          return signature.ToList().Take(n).ToArray();
+      }
+
+      List<double> sigList = signature.ToList();
+      while (sigList.Count() < n) {
+          sigList.Add(sigList[sigList.Count() - 1] + sigList[sigList.Count() - 2] + sigList[sigList.Count() - 3]);
+      }
+      return sigList.ToArray();
+
+  }
+
+  public static int GetUnique(IEnumerable<int> numbers) {
+
+      HashSet<int> theSet = new HashSet<int>(numbers);
+      return theSet.Where(e => numbers.Count(f => f == e) == 1).Take(1).ToArray()[0];
+
+  }
+
+  public static string ByState(string str) {
+
+      Dictionary<string, string> stateToWord = new Dictionary<string,string>(){
+          {"Massachusetts", "MA"}, 
+          {"California", "CA"},
+          {"Oklahoma", "OK"},
+          {"Pennsylvania", "PA"},
+          {"Virginia", "VA"},
+          {"Arizona", "AZ"},
+          {"Indiana", "IN"},
+          {"Illinois", "IL"},
+          {"Idaho", "ID"}
+      };
+
+      Dictionary<string, string> stateAbbrToWord = new Dictionary<string,string>(){
+          {"MA", "Massachusetts"}, 
+          {"CA", "California"},
+          {"OK", "Oklahoma"},
+          {"PA", "Pennsylvania"},
+          {"VA", "Virginia"},
+          {"AZ", "Arizona"},
+          {"IN", "Indiana"},
+          {"IL", "Illinois"},
+          {"ID", "Idaho"}
+      };
+
+      Dictionary<string, List<string>> stateDict = new Dictionary<string, List<string>>();
+      string[] splitStrEntries = str.Split("\n");
+      Dictionary<string, int> peopleLocations = new Dictionary<string, int>();
+      List<string> entries = new List<string>();
+      int index = 0;
+      foreach(string eachentry in splitStrEntries) {
+          string[] splitEntry = eachentry.Split(" ");
+          if (splitEntry.Length < 3) {
+              continue;
+          }
+          entries.Add(eachentry);
+          Console.WriteLine("testing grabbing state");
+          string state = stateAbbrToWord[splitEntry[splitEntry.Length - 1]];
+          string fullname = (splitEntry[0] + " " + splitEntry[1]).Replace(",", "");
+          List<string> people = stateDict.ContainsKey(state) ? stateDict[state] : new List<string>();
+          people.Add(fullname);
+          stateDict[state] = people;
+          peopleLocations[fullname] = index++;
+      }
+      List<string> states = new List<string>();
+      foreach(string key in stateDict.Keys) {
+          states.Add(key);
+      }
+      string[] stateDictKeys = stateDict.Keys.ToArray();
+      foreach(string stateAbbr in stateDictKeys) {
+        List<string> ppl = stateDict[stateAbbr];
+        ppl.Sort((person1, person2) => {
+
+            string firstNameP1 = person1.Split(" ")[0];
+            string lastNameP1 = person1.Split(" ")[1];
+            string firstNameP2 = person2.Split(" ")[0];
+            string lastNameP2 = person2.Split(" ")[1];
+            if (firstNameP1.CompareTo(firstNameP2) == 0) {
+                return lastNameP1.CompareTo(lastNameP2);
+            }
+            return firstNameP1.CompareTo(firstNameP2);
+            
+        });
+        stateDict[stateAbbr] = ppl;
+      }
+      states.Sort();
+      StringBuilder sb = new StringBuilder();
+      bool firstState = true;
+      foreach(string state in states) {
+          sb.Append($"{(firstState ? "" : " ")}{state}\n");
+          List<string> statePeople = stateDict[state];
+          foreach(string person in statePeople) {
+              int ind = peopleLocations[person];
+              string[] splitEntry = entries[ind].Replace(",", "").Split(" ");
+              splitEntry[splitEntry.Length - 1] = stateAbbrToWord[splitEntry[splitEntry.Length - 1]];
+              sb.Append($"{String.Join(" ", splitEntry)}\n");
+          }
+          firstState = false;
+      }
+
+      
+      return sb.ToString().Trim();
+
+
+  }
+
+  public static Func<int[], int[]> SortByBit = (int[] array) => {
+
+      List<int> intList = array.ToList();
+      intList.Sort((int a, int b) => {
+          string aBits = Convert.ToString(a, 2);
+          string bBits = Convert.ToString(b, 2);
+          int cntA = aBits.Count(e => e == '1');
+          int cntB = bBits.Count(e => e == '1');
+          return cntA == cntB ? a - b : cntA - cntB;
+      });
+      return intList.ToArray();
+  };
+
+  public static string Amort(double rate, int bal, int term, int num_payments) {
+
+      double monthlyRate = (rate / (100 * 12));
+      double newBal = (double)bal;
+      int payment = 0;
+      double monthlyPayment = Math.Round(((monthlyRate * newBal) * Math.Pow(1 + monthlyRate, term)) / (Math.Pow(1 + monthlyRate, term) - 1), 2);
+      while (newBal > 0 && payment < num_payments) {
+          double principalnm = newBal * ((rate / 100) / 12);
+          double princ = Math.Round(monthlyPayment - principalnm, 2);
+          newBal = Math.Round(newBal - princ, 2);
+          payment++;
+          if (payment == num_payments) {
+              return $"num_payment {num_payments} c {Math.Round(monthlyPayment)} princ {Math.Round(princ)} int {Math.Round(monthlyPayment - princ)} balance {Math.Round(newBal)}";
+          }
+
+      }
+      return $"payment = {payment}";
+
+  }
+
+  using System.Text;
+using System;
+using System.Linq;
+
+public class Dec2Fact {
+
+  public static string dec2FactString(long nb) {
+
+      int divisor = 1;
+      StringBuilder sb = new StringBuilder();
+      while (nb != 0) {
+          sb.Append((nb % divisor).ToString());
+          nb /= divisor;
+          divisor++;
+      }
+      char[] letters = sb.ToString().ToCharArray();
+      Array.Reverse(letters);
+      return String.Join("", letters);
+
+  }
+
+  public static long factorial(long number) {
+
+      long container = 1;
+      while (number > 1) {
+          container *= number;
+          number--;
+      }
+      return container;
+
+  }
+
+  public static long factString2Dec(string str) {
+    
+      string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    
+      long sum = 0;
+      int index = 0;
+      while (index < str.Length) {
+          sum += (letters.Contains(str[index].ToString()) ? 10 + letters.IndexOf(str[index]) : Int32.Parse(str[index].ToString())) * factorial(str.Length - (index + 1));
+          index++;
+      }
+      return sum;
+
+  }
+}
+  
+
 
 
 
         public static void Main(string[] args)
-        {   
-            Console.WriteLine(IsSolved(new int[,] { {1, 1, 1 }, {0, 2, 2}, {0, 0, 0}}));
+        {  
+            Console.WriteLine(dec2FactString(463));
         }
     }
 
