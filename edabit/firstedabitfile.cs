@@ -2120,7 +2120,115 @@
             }
         }
 
-        public static long factorial(long number) {
+  public static Func<int, int[]> ReverseSeq = (int n) => {
+
+      List<int> intList = Enumerable.Range(1, n).ToList();
+      intList.Reverse();
+      return intList.ToArray();
+
+  };
+
+  public static Func<string, Dictionary<char, int>> Count = (string str) => {
+
+      Dictionary<char, int> letters = new Dictionary<char, int>();
+      str.ToCharArray().Distinct().ToList().ForEach(e =>
+          letters.Add(e, str.ToCharArray().Count(f => f == e)));
+      return letters;
+
+  };
+
+  public static Func<int, int, int[]> CountBy = (int start, int end) => {
+
+      List<int> intList = new List<int>();
+      int fixedStart = start;
+      while (intList.Count() != end) {
+          intList.Add(start);
+          start += fixedStart;
+      }
+      return intList.ToArray();
+
+  };
+
+  public static int IsSolved(int[,] board) {
+
+      // rows
+      HashSet<int> container = new HashSet<int>();
+      int col = 0;
+      int winOne = 0;
+      int winTwo = 0;
+      // row
+      int zeros = 0;
+      for (int i = 0; i < 3; i++) {
+          for (int j = 0; j < 3; j++) {
+              if (board[i, j] == 0) {
+                  zeros++;
+              }
+            container.Add(board[i,j]);
+          }
+          if(container.Count() == 1 && container.ElementAt(0) != 0) {
+              winOne += container.ElementAt(0) == 1 ? 1 : 0;
+              winTwo += container.ElementAt(0) == 2 ? 1 : 0;
+          }
+          container.Clear();
+      }
+      if (container.Count == 1 && container.ElementAt(0) != 0) {
+          winOne += container.ElementAt(0) == 1 ? 1: 0;
+          winTwo += container.ElementAt(0) == 2 ? 1: 0;
+      }
+      container.Clear();
+      // columns
+      for (int i = 0; i < 3; i++) {
+          for (int j = 0; j < 3; j++) {
+              if (board[i, j] == 0) {
+                  zeros++;
+              }
+              container.Add(board[j, i]);
+          }
+          if(container.Count() == 1 && container.ElementAt(0) != 0) {
+              winOne += container.ElementAt(0) == 1 ? 1 : 0;
+              winTwo += container.ElementAt(0) == 2 ? 1 : 0;
+          } else {
+              container.Clear();
+          }
+      }
+      container.Clear();
+     // top left --> bottom right diag
+     for (int i = 0; i < 3; i++) {
+         container.Add(board[i,i]);
+     }
+     if (container.Count() == 1 && container.ElementAt(0) != 0) {
+         winOne += container.ElementAt(0) == 1 ? 1 : 0;
+         winTwo += container.ElementAt(0) == 2 ? 1 : 0;
+     }
+     // top right --> bottom left diag
+     container.Clear();
+     col = 2;
+     for (int i = 0; i < 3; i++) {
+         container.Add(board[i, col--]);
+     }
+     if (container.Count() == 1 && container.ElementAt(0) != 0) {
+         winOne += container.ElementAt(0) == 1 ? 1 : 0;
+         winTwo += container.ElementAt(0) == 2 ? 1 : 0;
+     }
+     container.Clear();
+
+     if (winOne > 0 || winTwo > 0) {
+         // both players may have won
+         if (winOne == winTwo && zeros == 0) {
+             return 0;
+         } else if(winOne > winTwo) {
+             return 1;
+         } else if (winTwo > winOne) {
+             return 2;
+         } else {
+             return -1;
+         }
+     } else {
+         return -1;
+     }
+
+  }
+
 
             long container = 1;
             while (number > 1) {
@@ -2143,6 +2251,9 @@
             }
             return sum;
 
+        public static void Main(string[] args)
+        {   
+            Console.WriteLine(IsSolved(new int[,] { {1, 1, 1 }, {0, 2, 2}, {0, 0, 0}}));
         }
             public static int[] VowelIndices(string word) {
 
