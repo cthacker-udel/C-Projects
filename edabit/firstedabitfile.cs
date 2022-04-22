@@ -2153,10 +2153,22 @@
                 return word.Split("").Select(e => ind++).Where(e => vowels.Contains(word[e])).Select(e => e + 1).ToArray();
 
             }
+
+            public static string Rgb(int r, int g, int b) {
+                (r, g, b) = (r > 255 ? 255 : r, g > 255 ? 255 : g, b > 255 ? 255 : b);
+                return $"{r.ToString("x").PadLeft(2, '0')}{g.ToString("x").PadLeft(2, '0')}{b.ToString("x").PadLeft(2, '0')}".ToUpper();
+            }
+
+            public static Func<int, int[]> Divisors = (int theNumber) => {
+                int[] factors = Enumerable.Range(2, (int)theNumber / 2).Where(e => theNumber % e == 0).ToArray();
+                return factors.Length > 0 ? factors : null;
+
+            };
         
             public static void Main(string[] args)
             {  
-                VowelIndices("apple");
+                int[] numbers = Divisors(16);
+                numbers.ToList().ForEach(Console.WriteLine);
             }
     }
 
