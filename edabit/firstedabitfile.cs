@@ -2164,10 +2164,37 @@
                 return factors.Length > 0 ? factors : null;
 
             };
+
+            public static Func<int[], int[]> MakeValley = (int[] arr) => {
+
+                List<int> theList = new List<int>(arr.ToList());
+                theList.Sort();
+                List<int> leftSide = new List<int>();
+                List<int> rightSide = new List<int>();
+                bool isLeft = true;
+                while (theList.Count() > 0) {
+                    if (isLeft) {
+                        leftSide.Add(theList[theList.Count() - 1]);
+                        theList.RemoveAt(theList.Count() - 1);
+                        isLeft = !isLeft;
+                    } else {
+                        rightSide.Add(theList[theList.Count() - 1]);
+                        theList.RemoveAt(theList.Count() - 1);
+                        isLeft = !isLeft;
+                    }
+                }
+                rightSide.Reverse();
+                List<int> totalSide = new List<int>(leftSide);
+                foreach(int number in rightSide) {
+                    totalSide.Add(number);
+                }
+                return totalSide.ToArray();
+
+            };
         
             public static void Main(string[] args)
             {  
-                int[] numbers = Divisors(16);
+                int[] numbers = MakeValley(new int[]{79, 35, 54, 19, 35, 25});
                 numbers.ToList().ForEach(Console.WriteLine);
             }
     }
