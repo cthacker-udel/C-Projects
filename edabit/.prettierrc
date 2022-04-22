@@ -1,0 +1,8 @@
+{
+    "bracketSpacing": true,
+    "htmlWhitespaceSensitivity": "css",
+    "bracketSameLine": true,
+    "arrowParens": "always",
+    "tabWidth": 2,
+    "useTabs": true,
+}
