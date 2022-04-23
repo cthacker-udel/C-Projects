@@ -2783,7 +2783,7 @@ namespace Edabit
             int index = 0;
             while (index < str.Length)
             {
-                sum += (letters.Contains(str[index].ToString()) ? 10 + letters.IndexOf(str[index]) : Int32.Parse(str[index].ToString())) * factorial(str.Length - (index + 1));
+                // COMENTED OUT DUE TO FACTORIAL ERROR sum += (letters.Contains(str[index].ToString()) ? 10 + letters.IndexOf(str[index]) : Int32.Parse(str[index].ToString())) * factorial(str.Length - (index + 1));
                 index++;
             }
             return sum;
@@ -2846,10 +2846,42 @@ namespace Edabit
 
         };
 
+        public static Func<string, bool> IsCubicString = (string theNumber) => {
+            int parsedNumber = Int32.Parse(theNumber);
+            return (int)theNumber.ToCharArray().Select(e => e.ToString()).Select(e => Math.Pow(Int32.Parse(e), 3)).Sum() == parsedNumber;
+        };
+
+        public static Func<string, string> isSumOfCubes = (string theNumberString) => {
+
+            List<string> digits = new List<string>();
+            string digitString = "";
+            string the_digits = "0123456789";
+            for (int i = 0; i < theNumberString.Length; i++) {
+                if (the_digits.Contains(theNumberString[i])) {
+                    digitString += theNumberString[i];
+                    if (digitString.Length == 3) {
+                        digits.Add(digitString);
+                        digitString = "";
+                    }
+                } else {
+                    if (digitString.Length > 0) {
+                        digits.Add(digitString);
+                    }
+                    digitString = "";
+                }
+            }
+            if (digitString.Length > 0) {
+                digits.Add(digitString);
+            }
+            digits.ToList().ForEach(Console.WriteLine);
+            List<int> intList = digits.Where(e => IsCubicString(e)).Select(e => Int32.Parse(e)).ToList();
+            return intList.Count() > 0 ? $"{intList.Select(e => e+"").Aggregate((e1, e2) => e1 + " " + e2)} {intList.Sum()} Lucky" : "Unlucky";
+        };
+
         public static void Main(string[] args)
         {
-            int[] numbers = MakeValley(new int[] { 79, 35, 54, 19, 35, 25 });
-            numbers.ToList().ForEach(Console.WriteLine);
+            string s = "[&z _upon 407298a --- ???ry, ww/100 I thought, 631str*ng and w===y -721&()]";
+            Console.WriteLine(isSumOfCubes(s));
         }
     }
 
