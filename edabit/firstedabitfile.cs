@@ -2783,7 +2783,7 @@ namespace Edabit
             int index = 0;
             while (index < str.Length)
             {
-                //sum += (letters.Contains(str[index].ToString()) ? 10 + letters.IndexOf(str[index]) : Int32.Parse(str[index].ToString())) * factorial(str.Length - (index + 1));
+                // COMENTED OUT DUE TO FACTORIAL ERROR sum += (letters.Contains(str[index].ToString()) ? 10 + letters.IndexOf(str[index]) : Int32.Parse(str[index].ToString())) * factorial(str.Length - (index + 1));
                 index++;
             }
             return sum;
@@ -2846,64 +2846,42 @@ namespace Edabit
 
         };
 
-        public static string sumStrings(string a, string b) {
-            a = a.TrimStart('0');
-            b = b.TrimStart('0');
-            int carry = 0;
-            string result = "";
-            while (a.Length < b.Length) {
-                a = "0" + a;
-            }
-            while (b.Length < a.Length) {
-                b = "0" + b;
-            }
-            Console.WriteLine($"Testing {a} and {b}");
-            for (int i = a.Length - 1; i >= 0; i--) {
+        public static Func<string, bool> IsCubicString = (string theNumber) => {
+            int parsedNumber = Int32.Parse(theNumber);
+            return (int)theNumber.ToCharArray().Select(e => e.ToString()).Select(e => Math.Pow(Int32.Parse(e), 3)).Sum() == parsedNumber;
+        };
 
-                int a_digit = Int32.Parse(a[i] + "");
-                int b_digit = Int32.Parse(b[i] + "");
-                int sum = carry + a_digit + b_digit;
-                if (i == 0) {
-                    result = sum.ToString() + result;
-                    break;
-                }
-                int placer = 0;
-                if (sum > 9) {
-                    if (carry > 1) {
-                        sum += carry;
+        public static Func<string, string> isSumOfCubes = (string theNumberString) => {
+
+            List<string> digits = new List<string>();
+            string digitString = "";
+            string the_digits = "0123456789";
+            for (int i = 0; i < theNumberString.Length; i++) {
+                if (the_digits.Contains(theNumberString[i])) {
+                    digitString += theNumberString[i];
+                    if (digitString.Length == 3) {
+                        digits.Add(digitString);
+                        digitString = "";
                     }
-                    sum -= 10;
-                    placer = sum;
-                    carry = 1;
                 } else {
-                    if (sum + carry > 9) {
-                        carry -= Math.Abs(sum - 9);
-                        sum = 9;
-                    } else {
-                        placer = sum;
-                        carry = 0;
+                    if (digitString.Length > 0) {
+                        digits.Add(digitString);
                     }
+                    digitString = "";
                 }
-                result = placer.ToString() + result;
             }
-            return result;
-        }
-
-        public static int Gimme(double[] inputArray) {
-
-            if (inputArray.Length != 3) {
-                double[] sorted = inputArray.ToList().OrderBy(e => e).ToArray();
-                sorted.ToList().ForEach(Console.WriteLine);
-                return inputArray.ToList().IndexOf(sorted[1]);
-            } else {
-                return -1;
+            if (digitString.Length > 0) {
+                digits.Add(digitString);
             }
-
-        }
+            digits.ToList().ForEach(Console.WriteLine);
+            List<int> intList = digits.Where(e => IsCubicString(e)).Select(e => Int32.Parse(e)).ToList();
+            return intList.Count() > 0 ? $"{intList.Select(e => e+"").Aggregate((e1, e2) => e1 + " " + e2)} {intList.Sum()} Lucky" : "Unlucky";
+        };
 
         public static void Main(string[] args)
         {
-            Console.WriteLine($"Result = {sumStrings("8797", "45")}");
+            string s = "[&z _upon 407298a --- ???ry, ww/100 I thought, 631str*ng and w===y -721&()]";
+            Console.WriteLine(isSumOfCubes(s));
         }
     }
 
