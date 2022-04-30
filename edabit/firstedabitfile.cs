@@ -2783,7 +2783,7 @@ namespace Edabit
             int index = 0;
             while (index < str.Length)
             {
-                sum += (letters.Contains(str[index].ToString()) ? 10 + letters.IndexOf(str[index]) : Int32.Parse(str[index].ToString())) * factorial(str.Length - (index + 1));
+                //sum += (letters.Contains(str[index].ToString()) ? 10 + letters.IndexOf(str[index]) : Int32.Parse(str[index].ToString())) * factorial(str.Length - (index + 1));
                 index++;
             }
             return sum;
@@ -2846,10 +2846,64 @@ namespace Edabit
 
         };
 
+        public static string sumStrings(string a, string b) {
+            a = a.TrimStart('0');
+            b = b.TrimStart('0');
+            int carry = 0;
+            string result = "";
+            while (a.Length < b.Length) {
+                a = "0" + a;
+            }
+            while (b.Length < a.Length) {
+                b = "0" + b;
+            }
+            Console.WriteLine($"Testing {a} and {b}");
+            for (int i = a.Length - 1; i >= 0; i--) {
+
+                int a_digit = Int32.Parse(a[i] + "");
+                int b_digit = Int32.Parse(b[i] + "");
+                int sum = carry + a_digit + b_digit;
+                if (i == 0) {
+                    result = sum.ToString() + result;
+                    break;
+                }
+                int placer = 0;
+                if (sum > 9) {
+                    if (carry > 1) {
+                        sum += carry;
+                    }
+                    sum -= 10;
+                    placer = sum;
+                    carry = 1;
+                } else {
+                    if (sum + carry > 9) {
+                        carry -= Math.Abs(sum - 9);
+                        sum = 9;
+                    } else {
+                        placer = sum;
+                        carry = 0;
+                    }
+                }
+                result = placer.ToString() + result;
+            }
+            return result;
+        }
+
+        public static int Gimme(double[] inputArray) {
+
+            if (inputArray.Length != 3) {
+                double[] sorted = inputArray.ToList().OrderBy(e => e).ToArray();
+                sorted.ToList().ForEach(Console.WriteLine);
+                return inputArray.ToList().IndexOf(sorted[1]);
+            } else {
+                return -1;
+            }
+
+        }
+
         public static void Main(string[] args)
         {
-            int[] numbers = MakeValley(new int[] { 79, 35, 54, 19, 35, 25 });
-            numbers.ToList().ForEach(Console.WriteLine);
+            Console.WriteLine($"Result = {sumStrings("8797", "45")}");
         }
     }
 

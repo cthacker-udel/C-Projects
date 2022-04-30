@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\flyin\\Desktop\\C#\\edabit\\Edabit.csproj": {}
+    "C:\\Users\\flyin\\OneDrive\\Desktop\\C#\\C-Projects\\edabit\\Edabit.csproj": {}
   },
   "projects": {
-    "C:\\Users\\flyin\\Desktop\\C#\\edabit\\Edabit.csproj": {
+    "C:\\Users\\flyin\\OneDrive\\Desktop\\C#\\C-Projects\\edabit\\Edabit.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\flyin\\Desktop\\C#\\edabit\\Edabit.csproj",
+        "projectUniqueName": "C:\\Users\\flyin\\OneDrive\\Desktop\\C#\\C-Projects\\edabit\\Edabit.csproj",
         "projectName": "Edabit",
-        "projectPath": "C:\\Users\\flyin\\Desktop\\C#\\edabit\\Edabit.csproj",
+        "projectPath": "C:\\Users\\flyin\\OneDrive\\Desktop\\C#\\C-Projects\\edabit\\Edabit.csproj",
         "packagesPath": "C:\\Users\\flyin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\flyin\\Desktop\\C#\\edabit\\obj\\",
+        "outputPath": "C:\\Users\\flyin\\OneDrive\\Desktop\\C#\\C-Projects\\edabit\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\flyin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -21,7 +21,9 @@
           "net5.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {}
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
         },
         "frameworks": {
           "net5.0": {
@@ -53,7 +55,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.406\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.407\\RuntimeIdentifierGraph.json"
         }
       }
     }
